@@ -6,6 +6,19 @@
 #include <RakPeerInterface.h>
 #include <MessageIdentifiers.h>
 #include <BitStream.h>
+#include <unordered_map>
+
+struct UserData
+{
+	char username[32];
+	char message[80];
+};
+
+struct GameObject
+{
+	glm::vec3 position;
+	glm::vec4 colour;
+};
 
 class Client : public aie::Application {
 public:
@@ -26,10 +39,22 @@ public:
 	//handle incoming packets
 	void handleNetworkMessages();
 
+	void onSetClientIDPacket(RakNet::Packet * packet);
+
+	void sendClientData();
+
+	void onReceivedClientDataPacket(RakNet::Packet * packet);
+
 protected:
 
 	glm::mat4	m_viewMatrix;
 	glm::mat4	m_projectionMatrix;
+
+	int m_clientID;
+	UserData m_user;
+	GameObject m_gameObject;
+
+	std::unordered_map<int, GameObject> m_otherClientGameObjects;
 
 	RakNet::RakPeerInterface* m_pPeerInterface;
 
